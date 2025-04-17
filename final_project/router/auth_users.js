@@ -71,10 +71,25 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
           book['reviews'][reviewer] = review;
           books[isbn] = book;
       }
-      res.send("The review for the book with ISBN  ${isbn} has been added/updated.");
+      res.send(`The review for the book with ISBN ${isbn} has been added/updated.`);
   }  else {
       res.send("ISBN not found");
   }
+});
+
+// delete book review
+regd_users.delete("/auth/review/:isbn", async (req, res) => {
+   //*Write your code here
+
+    const isbn = req.params.isbn
+    const username = req.session.authorization.username
+    if (books[isbn]) {
+        let book = await books[isbn]
+        delete book.reviews[username]
+        return res.status(200).send("Review successfully deleted")
+    } else {
+        return res.status(404).json({message: "ISBN not found"})
+    }
 });
 
 module.exports.authenticated = regd_users;
